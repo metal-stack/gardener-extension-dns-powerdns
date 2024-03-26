@@ -1,0 +1,31 @@
+---
+name: Verify Action
+on:
+  pull_request:
+    branches:
+      - main
+  release:
+    types:
+      - published
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Verify Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Go 1.22
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22.x'
+
+    - name: Verify
+      run: |
+        make revendor
+        make verify

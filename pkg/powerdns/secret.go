@@ -50,7 +50,7 @@ func readCredentialsSecret(secret *corev1.Secret) (*pdnsclient.Credentials, erro
 		return nil, err
 	}
 
-	virtualHost, err := getSecretStringValue(secret, VirtualHost, false)
+	virtualHost, _ := getSecretStringValue(secret, VirtualHost, false)
 
 	insecureSkipVerify, err := getSecretBoolValue(secret, InsecureSkipVerify)
 	if err != nil {

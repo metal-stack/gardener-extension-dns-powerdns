@@ -45,7 +45,7 @@ func readCredentialsSecret(secret *corev1.Secret) (*pdnsclient.Credentials, erro
 		return nil, err
 	}
 
-	server, _ := getSecretStringValue(secret, Server, true)
+	server, err := getSecretStringValue(secret, Server, true)
 	if err != nil {
 		return nil, err
 	}

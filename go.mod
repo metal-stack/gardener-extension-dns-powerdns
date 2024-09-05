@@ -3,7 +3,7 @@ module github.com/metal-stack/gardener-extension-dns-powerdns
 go 1.22
 
 require (
-	github.com/gardener/gardener v1.85.5
+	github.com/gardener/gardener v1.86.4
 	github.com/go-logr/logr v1.4.1
 	github.com/joeig/go-powerdns/v3 v3.10.0
 	github.com/spf13/cobra v1.8.0

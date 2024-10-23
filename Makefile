@@ -87,7 +87,6 @@ generate-in-container: tidy $(HELM)
 		--env GOCACHE=/gocache \
 		--mount type=tmpfs,destination=/gocache,tmpfs-mode=1777 \
 		--user $$(id -u):$$(id -g) \
-		--userns=keep-id \
 		--volume $(PWD):/go/src/github.com/metal-stack/gardener-extension-dns-powerdns:z \
 		--workdir /go/src/github.com/metal-stack/gardener-extension-dns-powerdns \
 		golang:$(GO_VERSION) \

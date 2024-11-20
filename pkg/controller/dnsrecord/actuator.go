@@ -15,7 +15,6 @@ import (
 	gardencorev1beta1helper "github.com/gardener/gardener/pkg/apis/core/v1beta1/helper"
 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
 	extensionsv1alpha1helper "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1/helper"
-	kutil "github.com/gardener/gardener/pkg/utils/kubernetes"
 	"github.com/go-logr/logr"
 	"github.com/joeig/go-powerdns/v3"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -41,7 +40,7 @@ func (a *actuator) Reconcile(ctx context.Context, log logr.Logger, dns *extensio
 	// Create PowerDNS client
 	pdnsClient, err := pdns.NewClientFromSecretRef(ctx, a.client, dns.Spec.SecretRef)
 	if err != nil {
-		return fmt.Errorf("could not create PowerDNS client: %+v", err)
+		return fmt.Errorf("could not create PowerDNS client: %w", err)
 	}
 
 	// Determine DNS hosted zone ID
@@ -52,7 +51,7 @@ func (a *actuator) Reconcile(ctx context.Context, log logr.Logger, dns *extensio
 
 	// Create or update DNS recordset
 	ttl := extensionsv1alpha1helper.GetDNSRecordTTL(dns.Spec.TTL)
-	log.Info("Creating or updating DNS recordset", "zone", zone, "name", dns.Spec.Name, "type", dns.Spec.RecordType, "values", dns.Spec.Values, "dnsrecord", kutil.ObjectName(dns))
+	log.Info("Creating or updating DNS recordset", "zone", zone, "name", dns.Spec.Name, "type", dns.Spec.RecordType, "values", dns.Spec.Values, "dnsrecord", dns.Name)
 	if err := pdnsClient.CreateOrUpdateDNSRecordSet(ctx, zone, dns.Spec.Name, powerdns.RRType(dns.Spec.RecordType), dns.Spec.Values, ttl); err != nil {
 		return fmt.Errorf("could not create or update DNS recordset in zone %s with name %s, type %s, and values %v: %w", zone, dns.Spec.Name, dns.Spec.RecordType, dns.Spec.Values, err)
 	}
@@ -60,7 +59,7 @@ func (a *actuator) Reconcile(ctx context.Context, log logr.Logger, dns *extensio
 	// Delete meta DNS recordset if exists
 	if dns.Status.LastOperation == nil || dns.Status.LastOperation.Type == gardencorev1beta1.LastOperationTypeCreate {
 		name, recordType := dnsrecord.GetMetaRecordName(dns.Spec.Name), "TXT"
-		log.Info("Deleting meta DNS recordset", "zone", zone, "name", name, "type", recordType, "dnsrecord", kutil.ObjectName(dns))
+		log.Info("Deleting meta DNS recordset", "zone", zone, "name", name, "type", recordType, "dnsrecord", dns.Name)
 		if err := pdnsClient.DeleteDNSRecordSet(ctx, zone, name, powerdns.RRType(recordType)); err != nil {
 			return fmt.Errorf("could not delete meta DNS recordset in zone %s with name %s and type %s: %w", zone, name, recordType, err)
 		}
@@ -77,7 +76,7 @@ func (a *actuator) Delete(ctx context.Context, log logr.Logger, dns *extensionsv
 	// Create PowerDNS client
 	pdnsClient, err := pdns.NewClientFromSecretRef(ctx, a.client, dns.Spec.SecretRef)
 	if err != nil {
-		return fmt.Errorf("could not create PowerDNS client: %+v", err)
+		return fmt.Errorf("could not create PowerDNS client: %w", err)
 	}
 
 	// Determine DNS hosted zone ID
@@ -87,7 +86,7 @@ func (a *actuator) Delete(ctx context.Context, log logr.Logger, dns *extensionsv
 	}
 
 	// Delete DNS recordset
-	log.Info("Deleting DNS recordset", "zone", zone, "name", dns.Spec.Name, "type", dns.Spec.RecordType, "values", dns.Spec.Values, "dnsrecord", kutil.ObjectName(dns))
+	log.Info("Deleting DNS recordset", "zone", zone, "name", dns.Spec.Name, "type", dns.Spec.RecordType, "values", dns.Spec.Values, "dnsrecord", dns.Name)
 	if err := pdnsClient.DeleteDNSRecordSet(ctx, zone, dns.Spec.Name, powerdns.RRType(dns.Spec.RecordType)); err != nil {
 		return fmt.Errorf("could not delete DNS recordset in zone %s with name %s, type %s, and values %v: %w", zone, dns.Spec.Name, dns.Spec.RecordType, dns.Spec.Values, err)
 	}
@@ -123,7 +122,7 @@ func (a *actuator) getZone(ctx context.Context, log logr.Logger, dns *extensions
 		if err != nil {
 			return "", fmt.Errorf("could not get DNS hosted zones: %w", err)
 		}
-		log.Info("Got DNS hosted zones", "zones", zones, "dnsrecord", kutil.ObjectName(dns))
+		log.Info("Got DNS hosted zones", "zones", zones, "dnsrecord", dns.Name)
 		zone := dnsrecord.FindZoneForName(zones, dns.Spec.Name)
 		if zone == "" {
 			return "", gardencorev1beta1helper.NewErrorWithCodes(fmt.Errorf("could not find DNS hosted zone for name %s", dns.Spec.Name), gardencorev1beta1.ErrorConfigurationProblem)

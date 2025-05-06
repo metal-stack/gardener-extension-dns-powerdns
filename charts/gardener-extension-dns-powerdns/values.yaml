@@ -39,3 +39,11 @@ config:
 
 gardener:
   version: ""
+
+# this allows the connection to a powerdns namespace in the cluster (namespaced not governed by the Gardener)
+networkPolicies:
+  enabled: false
+  powerDNS:
+    namespace: powerdns
+    podSelector:
+      app: powerdns

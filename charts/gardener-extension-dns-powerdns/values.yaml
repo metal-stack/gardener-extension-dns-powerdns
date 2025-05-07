@@ -39,6 +39,13 @@ config:
 
 gardener:
   version: ""
+  gardenlet:
+    featureGates: {}
+# seed:
+#   provider:
+# runtimeCluster:
+#   enabled: false
+#   priorityClassName: gardener-garden-system-200
 
 # this allows the connection to a powerdns namespace in the cluster (namespaced not governed by the Gardener)
 networkPolicies:

@@ -119,6 +119,7 @@ func NewControllerManagerCommand(ctx context.Context) *cobra.Command {
 			log.Info("Adding controllers to manager")
 
 			heartbeatCtrlOpts.Completed().Apply(&heartbeat.DefaultAddOptions)
+			reconcileOpts.Completed().Apply(&pdnsdnsrecord.DefaultAddOptions.IgnoreOperationAnnotation, &pdnsdnsrecord.DefaultAddOptions.ExtensionClass)
 			dnsRecordCtrlOpts.Completed().Apply(&pdnsdnsrecord.DefaultAddOptions.Controller)
 
 			if err := controllerSwitches.Completed().AddToManager(ctx, mgr); err != nil {

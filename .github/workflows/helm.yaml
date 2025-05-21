@@ -30,6 +30,20 @@ jobs:
             [ "${GITHUB_EVENT_NAME}" == 'release' ] && echo "tag=${GITHUB_REF##*/}" >> $GITHUB_ENV || true
             [ "${GITHUB_EVENT_NAME}" == 'push' ] && echo "tag=v0.0.0-develop" >> $GITHUB_ENV || true
 
+            # replacing container image tags in values.yaml
+
+            if ! which yq; then
+              sudo curl -Lo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64
+              sudo chmod +x /usr/local/bin/yq
+            fi
+
+            [ "${GITHUB_EVENT_NAME}" == 'pull_request' ] && docker_tag=${GITHUB_HEAD_REF##*/} || true
+            [ "${GITHUB_EVENT_NAME}" == 'release' ] && docker_tag=${GITHUB_REF##*/} || true
+            [ "${GITHUB_EVENT_NAME}" == 'push' ] && docker_tag=latest|| true
+
+            yq e -ij ".image.tag=\"${docker_tag}\"" charts/gardener-extension-dns-powerdns/values.yaml
+            yq e '.image.tag' charts/gardener-extension-dns-powerdns/values.yaml
+
         # we can replace this with the helm/chart-releaser-action after
         # https://github.com/helm/chart-releaser-action/issues/107 was resolved
         - name: Release Helm OCI Artifact

@@ -39,17 +39,17 @@ jobs:
         - name: Patch container image tags in values.yaml
           uses: mikefarah/yq@v4
           with:
-            cmd: yq e -i '.image.tag="${{ steps.meta.outputs.version }}"' charts/gardener-extension-dns-powerdns/values.yaml
+            cmd: yq e -i '.image.tag="${{ steps.meta.outputs.version }}"' charts/${{ github.event.repository.name }}/values.yaml
 
         # we can replace this with the helm/chart-releaser-action after
         # https://github.com/helm/chart-releaser-action/issues/107 was resolved
         - name: Release Helm OCI Artifact
           uses: appany/helm-oci-chart-releaser@v0.4.2
           with:
-            name: gardener-extension-dns-powerdns
+            name: ${{ github.event.repository.name }}
             repository: ${{ github.repository_owner }}/charts
             tag: ${{ env.tag }}
-            path: charts/gardener-extension-dns-powerdns
+            path: charts/${{ github.event.repository.name }}
             registry: ${{ env.REGISTRY }}
             registry_username: ${{ secrets.DOCKER_REGISTRY_USER }}
             registry_password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}

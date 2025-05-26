@@ -30,20 +30,16 @@ jobs:
             [ "${GITHUB_EVENT_NAME}" == 'release' ] && echo "tag=${GITHUB_REF##*/}" >> $GITHUB_ENV || true
             [ "${GITHUB_EVENT_NAME}" == 'push' ] && echo "tag=v0.0.0-develop" >> $GITHUB_ENV || true
 
-            # we also need the docker tags or replacing them in the values.yaml
-            [ "${GITHUB_EVENT_NAME}" == 'pull_request' ] && echo DOCKER_TAG=${GITHUB_HEAD_REF##*/} >> $GITHUB_ENV  || true
-            [ "${GITHUB_EVENT_NAME}" == 'release' ] && echo DOCKER_TAG=${GITHUB_REF##*/} >> $GITHUB_ENV  || true
-            [ "${GITHUB_EVENT_NAME}" == 'push' ] && echo DOCKER_TAG=latest >> $GITHUB_ENV || true
+        - name: Docker meta
+          id: meta
+          uses: docker/metadata-action@v5
 
+        # the replacement can be checked with:
+        # helm show values oci://ghcr.io/metal-stack/charts/<chart>:<tag>
         - name: Patch container image tags in values.yaml
           uses: mikefarah/yq@v4
           with:
-            cmd: yq e -i '.image.tag="${{ env.DOCKER_TAG }}"' charts/gardener-extension-dns-powerdns/values.yaml
-
-        - name: Print values.yaml
-          uses: mikefarah/yq@v4
-          with:
-            cmd: yq e '.' charts/gardener-extension-dns-powerdns/values.yaml
+            cmd: yq e -i '.image.tag="${{ steps.meta.outputs.version }}"' charts/gardener-extension-dns-powerdns/values.yaml
 
         # we can replace this with the helm/chart-releaser-action after
         # https://github.com/helm/chart-releaser-action/issues/107 was resolved

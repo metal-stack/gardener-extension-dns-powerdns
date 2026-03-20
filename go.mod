@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/gardener/gardener v1.125.4
 	github.com/go-logr/logr v1.4.3
-	github.com/joeig/go-powerdns/v3 v3.10.0
+	github.com/joeig/go-powerdns/v3 v3.21.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	golang.org/x/tools v0.42.0

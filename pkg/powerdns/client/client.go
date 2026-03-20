@@ -25,7 +25,7 @@ func NewClient(cred *Credentials) *Client {
 	}
 
 	return &Client{
-		powerdns: powerdns.NewClient(cred.Server, virtualHost, headers, httpClient),
+		powerdns: powerdns.New(cred.Server, virtualHost, powerdns.WithHeaders(headers), powerdns.WithHTTPClient(httpClient)),
 	}
 }
 

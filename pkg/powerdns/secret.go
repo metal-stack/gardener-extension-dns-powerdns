@@ -12,7 +12,6 @@ import (
 
 	extensionscontroller "github.com/gardener/gardener/extensions/pkg/controller"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	pdnsclient "github.com/metal-stack/gardener-extension-dns-powerdns/pkg/powerdns/client"
@@ -83,7 +82,8 @@ func getSecretStringValue(secret *corev1.Secret, key string, required bool) (*st
 	if err != nil {
 		return nil, err
 	}
-	return ptr.To(string(value)), nil
+	v := string(value)
+	return &v, nil
 }
 
 func getSecretBoolValue(secret *corev1.Secret, key string) (bool, error) {

@@ -82,7 +82,8 @@ func getSecretStringValue(secret *corev1.Secret, key string, required bool) (*st
 	if err != nil {
 		return nil, err
 	}
-	return new(string(value)), nil
+	v := string(value)
+	return &v, nil
 }
 
 func getSecretBoolValue(secret *corev1.Secret, key string) (bool, error) {

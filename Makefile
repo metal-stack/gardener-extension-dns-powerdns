@@ -15,8 +15,8 @@ LD_FLAGS                    := "-w -X github.com/metal-stack/gardener-extension-
 LEADER_ELECTION             := false
 IGNORE_OPERATION_ANNOTATION := false
 WEBHOOK_CONFIG_URL          := localhost
-GO_VERSION                  := 1.24
-GOLANGCI_LINT_VERSION       := v1.64.8
+GO_VERSION                  := 1.26
+GOLANGCI_LINT_VERSION       := v2.11.3
 
 ifeq ($(CI),true)
   DOCKER_TTY_ARG=""

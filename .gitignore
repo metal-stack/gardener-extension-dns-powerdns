@@ -1,8 +1,9 @@
 .idea/
 .vscode
 .ci/
+.codegraph/
 
 hack/tools/bin
 vendor
 VERSION
-gardener-extension-dns-powerdns
+/gardener-extension-dns-powerdns

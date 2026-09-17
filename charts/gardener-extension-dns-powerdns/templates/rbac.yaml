@@ -7,6 +7,14 @@ metadata:
 {{ include "labels" . | indent 4 }}
 rules:
 - apiGroups:
+  - extensions.gardener.cloud
+  resources:
+  - clusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - resources.gardener.cloud
   resources:
   - managedresources

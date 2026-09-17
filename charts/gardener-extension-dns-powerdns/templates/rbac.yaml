@@ -1,3 +1,4 @@
+{{ if not (include "runtimeCluster.enabled" .) }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -6,6 +7,14 @@ metadata:
   labels:
 {{ include "labels" . | indent 4 }}
 rules:
+- apiGroups:
+  - extensions.gardener.cloud
+  resources:
+  - clusters
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups:
   - resources.gardener.cloud
   resources:
@@ -95,3 +104,4 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "name" . }}
   namespace: {{ .Release.Namespace }}
+{{- end }}

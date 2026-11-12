@@ -1,0 +1,27 @@
+apiVersion: operator.gardener.cloud/v1alpha1
+kind: Extension
+metadata:
+  name: powerdns
+spec:
+  deployment:
+    extension:
+      helm:
+        ociRepository:
+          ref: ghcr.io/metal-stack/charts/gardener-extension-dns-powerdns:latest
+      policy: Always
+      runtimeClusterValues:
+        image:
+          repository: ghcr.io/metal-stack/gardener-extension-dns-powerdns
+          tag: latest
+        networkPolicies:
+          enabled: true
+      values:
+        image:
+          repository: ghcr.io/metal-stack/gardener-extension-dns-powerdns
+          tag: latest
+        networkPolicies:
+          enabled: true
+  resources:
+  - kind: DNSRecord
+    primary: true
+    type: powerdns

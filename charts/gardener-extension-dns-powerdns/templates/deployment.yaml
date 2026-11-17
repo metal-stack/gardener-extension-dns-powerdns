@@ -57,7 +57,7 @@ spec:
         - --ignore-operation-annotation={{ .Values.controllers.ignoreOperationAnnotation }}
         {{- if (include "runtimeCluster.enabled" .) }}
         - --controllers=dnsrecord
-        - --extension-class=garden
+        - --extension-classes=garden
         {{- else }}
         - --disable-controllers={{ .Values.disableControllers | join "," }}
         {{- end }}

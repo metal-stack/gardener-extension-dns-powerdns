@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/gardener/gardener/extensions/pkg/controller"
 	controllercmd "github.com/gardener/gardener/extensions/pkg/controller/cmd"
@@ -121,6 +122,7 @@ func NewControllerManagerCommand(ctx context.Context) *cobra.Command {
 			heartbeatCtrlOpts.Completed().Apply(&heartbeat.DefaultAddOptions)
 			reconcileOpts.Completed().Apply(&pdnsdnsrecord.DefaultAddOptions.IgnoreOperationAnnotation)
 			dnsRecordCtrlOpts.Completed().Apply(&pdnsdnsrecord.DefaultAddOptions.Controller)
+			pdnsdnsrecord.DefaultAddOptions.ExtensionClasses = slices.Clone(generalOpts.Completed().ExtensionClasses)
 
 			if err := controllerSwitches.Completed().AddToManager(ctx, mgr); err != nil {
 				return fmt.Errorf("could not add controllers to manager: %w", err)
